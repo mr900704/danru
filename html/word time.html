@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>获取世界各地时间</title>
+    <link rel="stylesheet" href="../css/clear%20style.css">
+    <style>
+        .time-box{
+            width: 500px;
+            margin: 50px auto;
+            border: 1px solid #666;
+            border-radius: 10px;
+        }
+        .time-box .time-item strong{
+            font-size: 20px;
+            color: #000;
+        }
+        .time-box .time-item p{
+            font-size: 18px;
+            color: #000;
+        }
+    </style>
+</head>
+<body>
+<ul class="time-box">
+    <li class="time-item">
+        <strong>北京时间：</strong>
+        <p></p>
+    </li>
+    <li class="time-item">
+        <strong>东京时间：</strong>
+        <p></p>
+    </li>
+    <li class="time-item">
+        <strong>伦敦时间：</strong>
+        <p></p>
+    </li>
+    <li class="time-item">
+        <strong>纽约时间：</strong>
+        <p></p>
+    </li>
+</ul>
+</body>
+<script>
+    (function f() {
+        //获取元素
+        var aP=document.querySelectorAll(".time-item p"),
+            Len=aP.length;
+        time();
+        /*定时器用的函数*/
+        function time() {
+           var nowDate =new Date(),//获取当前时间
+               zeroTime=nowDate.getTime()+nowDate.getTimezoneOffset()*60*1000;//获取时间0时时间
+            /*世界各地时间组成数组*/
+            var timeArr=[new Date(zeroTime+9*60*60*1000),
+                        new Date(zeroTime+8*60*60*1000),
+                        new Date(zeroTime),
+                        new Date(zeroTime-5*60*60*1000)];
+            var weekArr=["日","一","二","三","四","五","六","七"];//星期数组
+            for(var i=0;i<Len;i++){//给p添加文本内容
+                var t=timeArr[i];
+                aP[i].innerHTML=t.getFullYear()+"年"+addZero(t.getMonth()+1)+"月" +addZero(t.getDate())+"日：" +
+                    "星期"+addZero(weekArr[t.getDay()])+ addZero(t.getHours())+"时"+ addZero(t.getMinutes())+"分"+ addZero(t.getSeconds())+"秒"
+            };
+        };
+        setInterval(time,1000);
+        /*加0函数*/
+        function addZero(num) {
+            if(num<10){
+                num="0"+num;
+            };
+            return num;
+        }
+
+    })();
+
+
+</script>
+</html>

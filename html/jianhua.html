@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>无缝轮播</title>
+    <link rel="stylesheet" href="../css/clear%20style.css">
+    <style>
+        section{
+            overflow: hidden;
+            position: relative;
+            width: 700px;
+            height: 450px;
+            margin: 50px 700px;
+            border: 1px solid pink;
+        }
+        /*图片样式区域*/
+        .img-box{
+            position: relative;
+            left: -700px;
+            top: 0;
+            width: 800%;
+            height: 100%;
+        }
+        .img-box .img-item{
+
+            float: left;
+            /*display: none;*/
+            width: 700px;
+            height: 450px;
+            /*opacity: 0;*/
+        }
+        .img-box .img-item img{
+            width: 100%;
+            height: 100%;
+        }
+        /*按钮样式区域*/
+        .but-box{
+            position: absolute;
+            left: 0;
+            bottom: 5px;
+            width: 100%;
+            height: 30px;
+            background: rgba(0,0,0,.6);
+            line-height: 30px;
+            text-align: center;
+        }
+        .but-box .but-item{
+
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            margin: 5px ;
+            background: #fff;
+            border-radius: 50%;
+            user-select: none;
+            cursor: pointer;
+        }
+        /*翻页按钮*/
+        .pageBut{
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            width: 22px;
+            height: 32px;
+            margin: auto auto;
+            background: purple;
+            z-index: 10;
+            user-select: none;
+            cursor: pointer;
+        }
+        .prev{
+            left: 10px;
+            background: url("../images/left_arrow.png") 0 0/22px 64px no-repeat;
+        }
+        .next{
+            right: 10px;
+            background: url("../images/right_arrow.png") 0 0/22px 64px no-repeat;
+        }
+        .pageBut:hover{
+            background-position-y: -32px;
+        }
+        /*选中颜色*/
+        .but-box .but-itemActive{
+            background: palevioletred;
+        }
+        .img-box .img-itemActive{
+            /*display: block;*/
+            opacity: 1;
+        }
+    </style>
+</head>
+<body>
+<section>
+    <!--翻页按钮-->
+    <div class="prev pageBut"></div>
+    <div class="next pageBut"></div>
+    <!--图片盒子-->
+    <ul class="img-box">
+        <li class="img-item">
+            <img src="../images/banner06.jpg" alt="3">
+        </li>
+        <li class="img-item img-itemActive">
+            <img src="../images/banner01.jpg" alt="3">
+        </li>
+        <li class="img-item">
+            <img src="../images/banner02.jpg" alt="3">
+        </li>
+        <li class="img-item">
+            <img src="../images/banner03.jpg" alt="3">
+        </li>
+        <li class="img-item">
+            <img src="../images/banner04.jpg" alt="3">
+        </li>
+        <li class="img-item">
+            <img src="../images/banner05.jpg" alt="3">
+        </li>
+        <li class="img-item">
+            <img src="../images/banner06.jpg" alt="3">
+        </li>
+        <li class="img-item img-itemActive">
+            <img src="../images/banner01.jpg" alt="3">
+        </li>
+    </ul>
+    <!--按钮盒子-->
+    <ul class="but-box">
+        <li class="but-item but-itemActive"></li>
+        <li class="but-item"></li>
+        <li class="but-item"></li>
+        <li class="but-item"></li>
+        <li class="but-item"></li>
+        <li class="but-item"></li>
+    </ul>
+</section>
+</body>
+<script>
+    (function fn() {
+        /*获取元素*/
+        var oUl=document.getElementsByClassName("img-box")[0],
+            aPageBut=document.getElementsByClassName("pageBut"),
+            aLiLen=document.getElementsByClassName("img-item").length,
+            aButItem=document.getElementsByClassName("but-item"),
+            pageButLen=aPageBut.length,
+            index=1,
+            initIndex=0,
+            oWarpBox=document.getElementsByTagName("section")[0],
+            oWarpBoxWidth=parseFloat(getComputedStyle(oWarpBox)["width"]);//获取最外层盒子的宽度
+
+        /*添加上下翻页事件开始*/
+        for(var i=0;i<pageButLen;i++){
+            ;(function (i) {//同步i的值
+                aPageBut[i].onclick=function () {
+                    if(i==1){
+                        if(index == aLiLen-1){//判断边界：当index大于长度-1时，重新为1；
+                            index=1;
+                            oUl.style.left=-index*oWarpBoxWidth+"px";
+                        };
+                        index++;
+                        var target=-index*oWarpBoxWidth;//定义目标值
+                        remove(oUl,"left",target,10);
+                    }else {
+                        if(index<=0){//判断边界：当index小于0，重新为长度-1；
+                            index=aLiLen-1;
+                        };
+                        index--;
+                        var target=-index*oWarpBoxWidth;
+                        remove(oUl,"left",target,10);
+
+                    }
+                };
+
+            })(i);
+        }
+    //下边按钮部分
+            for(var j=0;j<aLiLen-2;j++){
+                /*同步i的参数*/
+                ;(function (j) {
+                    aButItem[j].onclick=function () {
+
+                        if(j){//判断是从左到右点击按钮
+                            //目标值和步长
+                            var target2=-(j+1)*oWarpBoxWidth,
+                                step=-10;
+                            /*按钮被点击时自身样式-选中*/
+                            this.classList.add("but-itemActive");
+                            initIndex=j-1;//上一个下标
+                            /*按钮被点击时上一个按钮样式清空*/
+                            aButItem[initIndex].classList.remove("but-itemActive");
+                            next();
+                            function next() {
+                                var annimation=window.requestAnimationFrame(next),
+                                    startLeft=parseFloat(getComputedStyle(oUl)["left"]);
+                                console.log(startLeft)
+                                startLeft=startLeft+step;
+                                console.log(startLeft)
+                                console.log(step)
+
+                                if(startLeft<=target2){
+                                    startLeft=target2;
+                                    oUl.style.left=startLeft+"px";
+                                    cancelAnimationFrame(annimation);
+                                }
+                                oUl.style.left=startLeft+"px";
+
+                            };
+                        }else {//判断是从右到左点击按钮
+                            //目标值和步长
+                            var target2=-(j+1)*oWarpBoxWidth,
+                                step=-10;
+                            /*按钮被点击时自身样式-选中*/
+                            this.classList.add("but-itemActive");
+                            initIndex=j+1;//上一个下标
+                            /*按钮被点击时上一个按钮样式清空*/
+                            aButItem[initIndex].classList.remove("but-itemActive");
+                            next();
+                            function next() {
+                                var annimation=window.requestAnimationFrame(next),
+                                    startLeft=parseFloat(getComputedStyle(oUl)["left"]);
+                                console.log(startLeft)
+                                startLeft=startLeft+step;
+                                console.log(startLeft)
+                                console.log(step)
+
+                                if(startLeft<=target2){
+                                    startLeft=target2;
+                                    oUl.style.left=startLeft+"px";
+                                    cancelAnimationFrame(annimation);
+                                }
+                                oUl.style.left=startLeft+"px";
+
+                            };
+                        }
+                    };
+                })(j);
+            }
+/*未解决完的问题
+    1、给序号按钮添加点击时候判断条件依据什么判断？
+    2、点击序号按钮后没有和翻页按钮序号同步；
+* */
+        //运动框架
+        function remove(obj,attr,target,step) {
+            var init = parseFloat(getComputedStyle(obj)[attr]),
+                step = parseFloat(step),
+                target = parseFloat(target);
+            // console.log(target)
+            //判断初始值和目标值的大小
+            init < target ? step = step : step = -step;//判断起始值和结束值的大小，设置计算为+或者-
+            ;(function move() {
+                var animation = requestAnimationFrame(move);
+                // init=init+step;
+                /*判断传入的参数是否为透明度*/
+                if (attr !== "opacity") {/*传入的参数不为透明度时*/
+                    if (init < target) {//如果初始值小于目标值
+                        init = init + step;
+                        if (init >= target) {//当初始值计算后大于目标值时-重新赋值为目标值-并停止动画
+                            init = target;
+                            cancelAnimationFrame(animation)
+                        }
+                    } else {//当初始值小于目标值时
+                        init = init + step;
+                        if (init <= target) {//当初始值经过计算后小于目标值时-重新赋值为目标值-并停止动画
+                            init = target;
+                            cancelAnimationFrame(animation)
+                        }
+                    }
+                    ;
+                    obj.style[attr] = init + "px";
+                } else {
+                    //当传入的属性时透明度时
+                    if (init < target) {//如果初始值小于目标值
+                        init = init + step;//进行运算
+                        if (init >= target) {//判断当初始值大于等于目标值时-赋值-停止动画
+                            init = target;
+                            cancelAnimationFrame(animation)
+                        }
+                        ;
+                    } else {//如果初始值大于目标值
+                        init = init + step;//进行运算
+                        if (init <= target) {//判断当初始值大于等于目标值时-赋值-停止动画
+                            init = target;
+                            cancelAnimationFrame(animation)
+                        }
+                        ;
+
+                    }
+                    ;
+                    obj.style[attr] = init;
+                }
+            })();
+        }
+
+    })();
+</script>
+</html>

@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>淡入淡出</title>
+    <link rel="stylesheet" href="../css/clear%20style.css">
+    <style>
+        section{
+            position: relative;
+            width: 700px;
+            height: 450px;
+            margin: 50px auto;
+            border: 1px solid pink;
+        }
+        /*图片样式区域*/
+         .img-box{
+            position: relative;
+            width: 100%;
+            height: 100%;
+        }
+        .img-box .img-item{
+            position: absolute;
+            left: 0;
+            top: 0;
+            /*display: none;*/
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+        }
+        .img-box .img-item img{
+            width: 100%;
+            height: 100%;
+        }
+        /*按钮样式区域*/
+        .but-box{
+            position: absolute;
+            left: 0;
+            bottom: 5px;
+            width: 100%;
+            height: 30px;
+            background: rgba(0,0,0,.6);
+            line-height: 30px;
+            text-align: center;
+            z-index: 11;
+        }
+        .but-box .but-item{
+
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            margin: 5px ;
+            background: #fff;
+            border-radius: 50%;
+            user-select: none;
+            cursor: pointer;
+        }
+        /*翻页按钮*/
+        .pageBut{
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            width: 22px;
+            height: 32px;
+            margin: auto auto;
+            background: purple;
+            z-index: 10;
+            user-select: none;
+            cursor: pointer;
+            z-index: 11;
+
+        }
+        .prev{
+           left: 10px;
+            background: url("../images/left_arrow.png") 0 0/22px 64px no-repeat;
+        }
+        .next{
+            right: 10px;
+            background: url("../images/right_arrow.png") 0 0/22px 64px no-repeat;
+        }
+        .pageBut:hover{
+            background-position-y: -32px;
+        }
+        /*选中颜色*/
+        .but-box .but-itemActive{
+            background: palevioletred;
+        }
+        .img-box .img-itemActive{
+            /*display: block;*/
+            opacity: 1;
+            z-index: 10;
+        }
+    </style>
+</head>
+<body>
+<section>
+    <!--翻页按钮-->
+    <div class="prev pageBut"></div>
+    <div class="next pageBut"></div>
+    <!--图片盒子-->
+    <ul class="img-box">
+        <li class="img-item img-itemActive">
+            <img src="../images/banner01.jpg" alt="3">
+        </li>
+        <li class="img-item">
+            <img src="../images/banner02.jpg" alt="3">
+        </li>
+        <li class="img-item">
+            <img src="../images/banner03.jpg" alt="3">
+        </li>
+        <li class="img-item">
+            <img src="../images/banner04.jpg" alt="3">
+        </li>
+        <li class="img-item">
+            <img src="../images/banner05.jpg" alt="3">
+        </li>
+        <li class="img-item">
+            <img src="../images/banner06.jpg" alt="3">
+        </li>
+    </ul>
+    <!--按钮盒子-->
+    <ul class="but-box">
+        <li class="but-item but-itemActive"></li>
+        <li class="but-item"></li>
+        <li class="but-item"></li>
+        <li class="but-item"></li>
+        <li class="but-item"></li>
+        <li class="but-item"></li>
+    </ul>
+</section>
+<script>
+    (function f() {
+        /*获取元素*/
+        var aImgItem=document.getElementsByClassName("img-item"),
+            aButItem=document.getElementsByClassName("but-item"),
+            aImgItemLen=aImgItem.length,
+            initIndex=0;
+        // console.log(aImgItemLen)
+        /*给按钮添加事件*/
+        for(var i=0;i<aImgItemLen;i++){
+            /*同步i的参数*/
+            ;(function (i) {
+                aButItem[i].onclick=function () {
+
+                    /*按钮被点击时上一个按钮样式清空*/
+                    aButItem[initIndex].classList.remove("but-itemActive");
+                    /*按钮被点击时自身样式-选中*/
+                    this.classList.add("but-itemActive");
+                    /*图片同步*/
+                    // aImgItem[i].classList.add("img-itemActive");
+                    // aImgItem[initIndex].classList.remove("img-itemActive");
+                    remove(aImgItem[i],"opacity",1,0.02)
+                    remove(aImgItem[initIndex],"opacity",0,0.02)
+                    initIndex=i;
+                };
+            })(i);
+        }
+        /*速度版运动的封装*/
+        function remove(obj,attr,target,step) {
+            var init=parseFloat(getComputedStyle(obj)[attr]),
+                step=parseFloat(step),
+                target=parseFloat(target);
+            //判断初始值和目标值的大小
+            init<target?step=step:step=-step;//判断起始值和结束值的大小，设置计算为+或者-
+            ;(function move(){
+                var animation= requestAnimationFrame(move);
+                // init=init+step;
+                /*判断传入的参数是否为透明度*/
+                if(attr!=="opacity"){/*传入的参数不为透明度时*/
+                    if(init<target){//如果初始值小于目标值
+                        init=init+step;
+                        if(init>=target){//当初始值计算后大于目标值时-重新赋值为目标值-并停止动画
+                            init=target;
+                            cancelAnimationFrame(animation)
+                        }
+                    }else {//当初始值小于目标值时
+                        init=init+step;
+                        if(init<=target){//当初始值经过计算后小于目标值时-重新赋值为目标值-并停止动画
+                            init=target;
+                            cancelAnimationFrame(animation)
+                        }
+                    };
+                    obj.style[attr]=init+"px";
+                }else {
+                    //当传入的属性时透明度时
+                    if(init<target){//如果初始值小于目标值
+                        init=init+step;//进行运算
+                        if(init>=target){//判断当初始值大于等于目标值时-赋值-停止动画
+                            init=target;
+                            cancelAnimationFrame(animation)
+                        };
+                    }else {//如果初始值大于目标值
+                        init=init+step;//进行运算
+                        if(init<=target){//判断当初始值大于等于目标值时-赋值-停止动画
+                            init=target;
+                            cancelAnimationFrame(animation)
+                        };
+
+                    };
+                    obj.style[attr]=init;
+                }
+            })();
+        };
+        //添加类名和移除类名封装兼容
+
+
+    })();
+
+</script>
+</body>
+</html>

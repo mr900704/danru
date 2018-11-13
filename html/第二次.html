@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>无缝轮播没有序号按钮</title>
+    <link rel="stylesheet" href="../css/clear%20style.css">
+    <style>
+        section{
+            overflow: hidden;
+            position: relative;
+            width: 700px;
+            height: 450px;
+            margin: 50px 700px;
+            border: 1px solid pink;
+        }
+        /*图片样式区域*/
+        .img-box{
+            position: relative;
+            left: -700px;
+            top: 0;
+            width: 800%;
+            height: 100%;
+        }
+        .img-box .img-item{
+
+            float: left;
+            /*display: none;*/
+            width: 700px;
+            height: 450px;
+            /*opacity: 0;*/
+        }
+        .img-box .img-item img{
+            width: 100%;
+            height: 100%;
+        }
+        /*按钮样式区域*/
+        .but-box{
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            width: 100%;
+            height: 30px;
+            background: rgba(0,0,0,.6);
+            line-height: 30px;
+            text-align: center;
+
+            /*pointer-events: none;*/
+
+        }
+        .but-box .but-item{
+
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            margin: 5px ;
+            background: #fff;
+            border-radius: 50%;
+            user-select: none;
+            cursor: pointer;
+        }
+        /*翻页按钮*/
+        .pageBut{
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            width: 22px;
+            height: 32px;
+            margin: auto auto;
+            background: purple;
+            z-index: 10;
+            user-select: none;
+            cursor: pointer;
+        }
+        .prev{
+            left: 0;
+            background: url("../images/left_arrow.png") 0 0/22px 64px no-repeat;
+        }
+        .next{
+            right: 0;
+            background: url("../images/right_arrow.png") 0 0/22px 64px no-repeat;
+        }
+        .pageBut:hover{
+            background-position-y: -32px;
+        }
+        /*选中颜色*/
+        .but-box .but-itemActive{
+            background: palevioletred;
+        }
+        .img-box .img-itemActive{
+            /*display: block;*/
+            opacity: 1;
+        }
+    </style>
+</head>
+<body>
+<section>
+    <!--翻页按钮-->
+    <div class="prev pageBut"></div>
+    <div class="next pageBut"></div>
+    <!--图片盒子-->
+    <ul class="img-box">
+        <li class="img-item">
+            <img src="../images/banner06.jpg" alt="3">
+        </li>
+        <li class="img-item img-itemActive">
+            <img src="../images/banner01.jpg" alt="3">
+        </li>
+        <li class="img-item">
+            <img src="../images/banner02.jpg" alt="3">
+        </li>
+        <li class="img-item">
+            <img src="../images/banner03.jpg" alt="3">
+        </li>
+        <li class="img-item">
+            <img src="../images/banner04.jpg" alt="3">
+        </li>
+        <li class="img-item">
+            <img src="../images/banner05.jpg" alt="3">
+        </li>
+        <li class="img-item">
+            <img src="../images/banner06.jpg" alt="3">
+        </li>
+        <li class="img-item img-itemActive">
+            <img src="../images/banner01.jpg" alt="3">
+        </li>
+    </ul>
+    <!--按钮盒子-->
+    <ul class="but-box">
+        <li class="but-item but-itemActive"></li>
+        <li class="but-item"></li>
+        <li class="but-item"></li>
+        <li class="but-item"></li>
+        <li class="but-item"></li>
+        <li class="but-item"></li>
+    </ul>
+</section>
+</body>
+<script>
+    (function fn() {
+        /*获取元素*/
+        var oUl = document.getElementsByClassName("img-box")[0],
+            oWarpBox=document.getElementsByTagName("section")[0],
+            aLiLen=document.getElementsByClassName("img-item").length,//图片li的长度
+            aButItem=document.getElementsByClassName("but-item"),//序号按钮集合
+            aPageBut=document.getElementsByClassName("pageBut"),//获取上下翻页按钮
+            pageButLen=aPageBut.length,
+            oWarpBoxWidth=parseInt(getComputedStyle(oWarpBox)["width"]),//获取最外层盒子的宽度
+            aButItemLen=aButItem.length,
+            index=0;//初始下标
+        console.log()
+        //自动播放
+        /**/
+        var timer=setInterval(autoPlay,2000)
+        function autoPlay() {
+            //判断index边界
+            if(index==aLiLen-2){
+                index=0;
+                oUl.style.left=-oWarpBoxWidth+"px";
+            };
+            //序号按钮的状态
+            // var lastIndex=index;
+            aButItem[index].classList.remove("but-itemActive");//移除上一个的状态
+            //自动播放时图片移动
+            index++;
+            //判断序号按钮的边界
+            index==aButItemLen? aButItem[0].classList.add("but-itemActive"):aButItem[index].classList.add("but-itemActive");
+            var target=-(index* oWarpBoxWidth)-oWarpBoxWidth;
+            console.log(target)
+            remove(oUl,"left",target,10)
+        };
+/**/
+        //上下翻页按钮
+        aPageBut[1].onclick=function () {
+            // clearInterval(timer)
+            if(index==aLiLen-2){
+                index=0;
+                oUl.style.left=-oWarpBoxWidth+"px";
+            };
+                aButItem[index].classList.remove("but-itemActive");
+            index++;
+
+            if(index==aLiLen-2){
+                aButItem[0].classList.add("but-itemActive");
+            }else {
+                aButItem[index].classList.add("but-itemActive");
+
+            };
+
+            var target=-(index* oWarpBoxWidth)-oWarpBoxWidth;
+            remove(oUl,"left",target,10)
+        };
+
+        /* */
+        aPageBut[0].onclick=function () {
+            // clearInterval(timer)
+            if(index<0){
+                index=aLiLen-3;
+                oUl.style.left=-(index*oWarpBoxWidth+oWarpBoxWidth)+"px";
+            };
+            aButItem[index].classList.remove("but-itemActive");
+            index--;
+            if(index<0){
+                aButItem[aLiLen-3].classList.add("but-itemActive");
+            }else {
+                aButItem[index].classList.add("but-itemActive");
+            };
+            var target=-(index* oWarpBoxWidth)-oWarpBoxWidth;
+            remove(oUl,"left",target,10)
+        };
+
+        /**/
+        //序号按钮
+        for(var i=0;i<aButItemLen;i++){
+            aButItem[i].i=i;
+            aButItem[i].onclick=function () {
+                aButItem[index].classList.remove("but-itemActive");
+                this.classList.add("but-itemActive");
+                index=this.i;
+                var target=-(index* oWarpBoxWidth)-oWarpBoxWidth;
+                remove(oUl,"left",target,10)
+
+            }
+        }
+
+        /**/
+        //鼠标移到最外层盒子的事件
+        oWarpBox.onmouseenter=function () {
+            console.log(111)
+            clearInterval(timer)
+        }
+        oWarpBox.onmouseleave=function () {
+            console.log(661)
+            timer=setInterval(autoPlay,2000)
+        }
+// debugger
+        })();
+    //运动框架
+    function remove(obj,attr,target,step) {
+        var init = parseFloat(getComputedStyle(obj)[attr]),
+            step = parseFloat(step),
+            target = parseFloat(target);
+        // console.log(target)
+        //判断初始值和目标值的大小
+        init < target ? step = step : step = -step;//判断起始值和结束值的大小，设置计算为+或者-
+        ;(function move() {
+            var animation = requestAnimationFrame(move);
+            // init=init+step;
+            /*判断传入的参数是否为透明度*/
+            if (attr !== "opacity") {/*传入的参数不为透明度时*/
+                if (init < target) {//如果初始值小于目标值
+                    init = init + step;
+                    if (init >= target) {//当初始值计算后大于目标值时-重新赋值为目标值-并停止动画
+                        init = target;
+                        cancelAnimationFrame(animation)
+                    }
+                } else {//当初始值小于目标值时
+                    init = init + step;
+                    if (init <= target) {//当初始值经过计算后小于目标值时-重新赋值为目标值-并停止动画
+                        init = target;
+                        cancelAnimationFrame(animation)
+                    }
+                }
+                ;
+                obj.style[attr] = init + "px";
+            } else {
+                //当传入的属性时透明度时
+                if (init < target) {//如果初始值小于目标值
+                    init = init + step;//进行运算
+                    if (init >= target) {//判断当初始值大于等于目标值时-赋值-停止动画
+                        init = target;
+                        cancelAnimationFrame(animation)
+                    }
+                    ;
+                } else {//如果初始值大于目标值
+                    init = init + step;//进行运算
+                    if (init <= target) {//判断当初始值大于等于目标值时-赋值-停止动画
+                        init = target;
+                        cancelAnimationFrame(animation)
+                    }
+                    ;
+
+                }
+                ;
+                obj.style[attr] = init;
+            }
+        })();
+    }
+</script>
+</html>

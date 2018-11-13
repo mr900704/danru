@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>测试运动框架支持ie</title>
+    <link rel="stylesheet" href="../css/clear%20style.css">
+    <style>
+        #box{
+            position: absolute;
+            left: 100px;
+            width: 100px;
+            height: 100px;
+            background: purple;
+            /*opacity: 0.1;*/
+            opacity: 0.1;
+        }
+    </style>
+</head>
+<body>
+<div id="box"></div>
+</body>
+<script>
+    //ie中不支持requestAnimationFrame的兼容
+    window.requestAnimationFrame=window.requestAnimationFrame||function () {
+    var timer=setTimeout()
+    return timer;
+    };
+window.cancelAnimationFrame=window.cancelAnimationFrame||clearTimeout;
+    (function f() {
+        var oBox=document.getElementById("box");
+
+
+        //此封装支持不ie和但不支持颜色作为参数传入
+        function remove(obj,attr,target,step) {
+            var init=parseFloat(getStyle(obj,attr)),
+                step=parseFloat(step),
+                target=parseFloat(target);
+            //判断初始值和目标值的大小
+            init<target?step=step:step=-step;//判断起始值和结束值的大小，设置计算为+或者-
+            ;(function move(){
+                var animation= requestAnimationFrame(move);
+                // init=init+step;
+                /*判断传入的参数是否为透明度*/
+                if(attr!=="opacity"){/*传入的参数不为透明度时*/
+                    if(init<target){//如果初始值小于目标值
+                        init=init+step;
+                        if(init>=target){//当初始值计算后大于目标值时-重新赋值为目标值-并停止动画
+                            init=target;
+                            cancelAnimationFrame(animation)
+                        }
+                    }else {//当初始值小于目标值时
+                        init=init+step;
+                        if(init<=target){//当初始值经过计算后小于目标值时-重新赋值为目标值-并停止动画
+                            init=target;
+                            cancelAnimationFrame(animation)
+                        }
+                    };
+                    obj.style[attr]=init+"px";
+                }else {
+                    //当传入的属性时透明度时
+                    if(init<target){//如果初始值小于目标值
+                        init=init+step;//进行运算
+                        if(init>=target){//判断当初始值大于等于目标值时-赋值-停止动画
+                            init=target;
+                            cancelAnimationFrame(animation)
+                        };
+                    }else {//如果初始值大于目标值
+                        init=init+step;//进行运算
+                        if(init<=target){//判断当初始值大于等于目标值时-赋值-停止动画
+                            init=target;
+                            cancelAnimationFrame(animation)
+                        };
+
+                    };
+                    obj.style[attr]=init;
+                }
+            })();
+        };
+        // remove (oBox,"left",500,10)
+        remove (oBox,"opacity",1,0.01)//为测试透明度准备
+        /*获取样式兼容*/
+        function getStyle(obj,attr){
+            return  obj.currentStyle ? obj.currentStyle[attr]:getComputedStyle(obj)[attr];
+        }
+    })();
+
+</script>
+</html>

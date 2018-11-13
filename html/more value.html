@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>测试运动框架支持ie</title>
+    <link rel="stylesheet" href="../css/clear%20style.css">
+    <style>
+        #box{
+            position: absolute;
+            left: 100px;
+            width: 100px;
+            height: 500px;
+            background: purple;
+            /*opacity: 0.1;*/
+            opacity: 0.1;
+        }
+    </style>
+</head>
+<body>
+<div id="box"></div>
+</body>
+<script>
+    //ie中不支持requestAnimationFrame的兼容
+    window.requestAnimationFrame=window.requestAnimationFrame||function () {
+        var timer=setTimeout()
+        return timer;
+    };
+    window.cancelAnimationFrame=window.cancelAnimationFrame||clearTimeout;
+    (function f() {
+        var oBox=document.getElementById("box");
+
+
+        //此封装支持不ie和但不支持颜色作为参数传入
+        function remove(obj,json,step) {
+            var aInitAttr=obj.currentStyle||window.getComputedStyle(obj),
+                 step=parseFloat(step);
+            // console.log(aInitAttr)
+            var init={},
+                target={};
+            for(var attr in json){
+                init[attr]=parseInt(aInitAttr[attr]);
+                target[attr]=parseInt(json[attr]);
+                //判断初始值和目标值的大小
+                // if(init[attr]<target[attr]){
+                //     step=step;
+                //     move();
+                // }else{
+                //     step=-step;
+                //     move();
+                // }
+                // console.log(init[attr])
+                // console.log(target[attr])
+            };
+            console.log(init)
+            console.log(target)
+            move()
+            function move(){
+                var animation= requestAnimationFrame(move);
+                /*判断传入的参数是否为透明度*/
+                for(var attr in json){
+
+                    if(json[attr]!=="opacity"){/*传入的参数不为透明度时*/
+                        console.log(attr)
+                        if(init[attr]>target[attr]){//如果初始值小于目标值
+
+                            step=step;
+                            init[attr]=init[attr]+step;
+                            if(init[attr]>=target[attr]){//当初始值计算后大于目标值时-重新赋值为目标值-并停止动画
+                                init[attr]=target[attr];
+                                cancelAnimationFrame(animation)
+                            }
+                            obj.style[attr]=init[attr]+"px";
+
+                        }else {//当初始值大于目标值时
+                            step=-step
+                            init[attr]=init[attr]+step;
+                            console.log(init[attr]>target[attr])
+                            if(init[attr]<=target[attr]){//当初始值经过计算后小于目标值时-重新赋值为目标值-并停止动画
+                                init[attr]=target[attr];
+                                console.log(88)
+                                cancelAnimationFrame(animation)
+                            };
+                            obj.style[attr]=init[attr]+"px";
+
+                        };
+                    }/*
+                    else {
+                        // console.log(111)
+
+                        //当传入的属性时透明度时
+                        if(init[attr]<target[attr]){//如果初始值小于目标值
+                            step=step
+                            init[attr]=init[attr]+step[attr];//进行运算
+                            if(init[attr]>=target[attr]){//判断当初始值大于等于目标值时-赋值-停止动画
+                                init[attr]=target[attr];
+                                cancelAnimationFrame(animation)
+                            };
+                        }else {//如果初始值大于目标值
+                            step=-step
+                            init[attr]=init[attr]+step[attr];//进行运算
+                            if(init[attr]<=target[attr]){//判断当初始值大于等于目标值时-赋值-停止动画
+                                init[attr]=target[attr];
+                                cancelAnimationFrame(animation)
+                            };
+
+                        };
+                        obj.style[attr]=init[attr];
+                    }
+                    */
+                }
+
+            };
+        };
+        // remove (oBox,{"left":500},10)
+        remove (oBox,{"height":100},10)
+        // remove (oBox,{"left":500,
+        // "height":100},10)//为测试透明度准备
+        /*获取样式兼容*/
+        function getStyle(obj,attr){
+            return  obj.currentStyle ? obj.currentStyle[attr]:getComputedStyle(obj)[attr];
+        }
+    })();
+
+</script>
+</html>

@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>无缝轮播</title>
+    <link rel="stylesheet" href="../css/clear%20style.css">
+    <style>
+        section{
+            overflow: hidden;
+            position: relative;
+            width: 700px;
+            height: 450px;
+            margin: 50px 700px;
+            border: 1px solid pink;
+        }
+        /*图片样式区域*/
+        .img-box{
+            position: relative;
+            left: -700px;
+            top: 0;
+            width: 800%;
+            height: 100%;
+        }
+        .img-box .img-item{
+
+           float: left;
+            /*display: none;*/
+            width: 700px;
+            height: 450px;
+            /*opacity: 0;*/
+        }
+        .img-box .img-item img{
+            width: 100%;
+            height: 100%;
+        }
+        /*按钮样式区域*/
+        .but-box{
+            position: absolute;
+            left: 0;
+            bottom: 5px;
+            width: 100%;
+            height: 30px;
+            background: rgba(0,0,0,.6);
+            line-height: 30px;
+            text-align: center;
+        }
+        .but-box .but-item{
+
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            margin: 5px ;
+            background: #fff;
+            border-radius: 50%;
+            user-select: none;
+            cursor: pointer;
+        }
+        /*翻页按钮*/
+        .pageBut{
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            width: 22px;
+            height: 32px;
+            margin: auto auto;
+            background: purple;
+            z-index: 10;
+            user-select: none;
+            cursor: pointer;
+        }
+        .prev{
+            left: 10px;
+            background: url("../images/left_arrow.png") 0 0/22px 64px no-repeat;
+        }
+        .next{
+            right: 10px;
+            background: url("../images/right_arrow.png") 0 0/22px 64px no-repeat;
+        }
+        .pageBut:hover{
+            background-position-y: -32px;
+        }
+        /*选中颜色*/
+        .but-box .but-itemActive{
+            background: palevioletred;
+        }
+        .img-box .img-itemActive{
+            /*display: block;*/
+            opacity: 1;
+        }
+    </style>
+</head>
+<body>
+<section>
+    <!--翻页按钮-->
+    <div class="prev pageBut"></div>
+    <div class="next pageBut"></div>
+    <!--图片盒子-->
+    <ul class="img-box">
+        <li class="img-item">
+            <img src="../images/banner06.jpg" alt="3">
+        </li>
+        <li class="img-item img-itemActive">
+            <img src="../images/banner01.jpg" alt="3">
+        </li>
+        <li class="img-item">
+            <img src="../images/banner02.jpg" alt="3">
+        </li>
+        <li class="img-item">
+            <img src="../images/banner03.jpg" alt="3">
+        </li>
+        <li class="img-item">
+            <img src="../images/banner04.jpg" alt="3">
+        </li>
+        <li class="img-item">
+            <img src="../images/banner05.jpg" alt="3">
+        </li>
+        <li class="img-item">
+            <img src="../images/banner06.jpg" alt="3">
+        </li>
+        <li class="img-item img-itemActive">
+            <img src="../images/banner01.jpg" alt="3">
+        </li>
+    </ul>
+    <!--按钮盒子-->
+    <ul class="but-box">
+        <li class="but-item but-itemActive"></li>
+        <li class="but-item"></li>
+        <li class="but-item"></li>
+        <li class="but-item"></li>
+        <li class="but-item"></li>
+        <li class="but-item"></li>
+    </ul>
+</section>
+</body>
+<script>
+    (function fn() {
+        /*获取元素*/
+        var oUl=document.getElementsByClassName("img-box")[0],
+            aPageBut=document.getElementsByClassName("pageBut"),
+            aLiLen=document.getElementsByClassName("img-item").length,
+           pageButLen=aPageBut.length,
+            index=1,
+            oWarpBox=document.getElementsByTagName("section")[0],
+            oWarpBoxWidth=parseFloat(getComputedStyle(oWarpBox)["width"]);//获取最外层盒子的宽度
+        // console.log(pageButLen);
+        // console.log(oWarpBoxWidth);
+        /*添加上下翻页事件*/
+        for(var i=0;i<pageButLen;i++){
+            ;(function (i) {//同步i的值
+                aPageBut[i].onclick=function () {
+                        if(i==1){
+                            index++;
+                            var target=-index*oWarpBoxWidth,
+                                step=10;
+                            if(index == aLiLen-1){
+                                index=1;
+                            };
+                            next();
+                            function next(){
+                                var change=window.requestAnimationFrame(next),
+                                     initLeft=parseInt(getComputedStyle(oUl)["left"]);
+                                initLeft=initLeft-step;
+                                if(initLeft<=target){
+                                    // console.log(888)
+                                    initLeft=-index*oWarpBoxWidth;
+                                    oUl.style.left=initLeft+"px";
+                                    cancelAnimationFrame(change)
+                                };
+
+                                oUl.style.left=initLeft+"px";
+                            };
+                        }else {
+                            index--;
+                            console.log(index);
+                            var target=-index*oWarpBoxWidth,
+                                step=10;
+                            if(index<=0){
+                                index=aLiLen-1;
+                            };
+                            console.log(target)
+                            prev();
+                            function prev() {
+                                var change=window.requestAnimationFrame(prev),
+                                      initLeft=parseInt(getComputedStyle(oUl)["left"]);
+                                    initLeft=initLeft+step;
+                                if(initLeft>=target){
+                                    initLeft=target;
+                                    oUl.style.left=initLeft+"px";
+                                    cancelAnimationFrame(change)
+                                };
+                                oUl.style.left=initLeft+"px";
+                            }
+                        }
+                }
+
+
+            })(i);
+        }
+        /*事件中使用的函数*/
+        // function move(obj,attr,target,step) {
+        //     if(i==1){
+        //         index++;
+        //         if(index= pageButLen-1){
+        //             index=1;
+        //         };
+        //         var target=index*oWarpBoxWidth;
+        //
+        //     }
+        // };
+    })();
+</script>
+</html>

@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="../css/clear%20style.css">
+    <style>
+        .img-box{
+            position: relative;
+            width: 540px;
+            height: 110px;
+            margin: 50px auto;
+            border: 1px solid #a9a9a9;
+            text-align: center;
+        }
+        .img-box ul{
+            position: absolute;
+            left: 70px;
+            top: 25px;
+            width: 400px;
+            height: 60px;
+        }
+        .img-box ul li{
+            float: left;
+            overflow: hidden;
+            width: 40px;
+            height: 60px;
+            margin-right: 8px;
+            background: #444444;
+            font-size: 30px;
+            color: #fff;
+            text-align: center;
+            line-height: 60px;
+            border-radius: 10px ;
+        }
+        .img-box ul li:nth-child(3),.img-box ul li:nth-child(6){
+            background: #ffffff;
+        }
+        .img-sizeNum{
+            width: 40px;
+            height: 60px;
+        }
+        .img-sizeD{
+            width: 20px;
+            height: 60px;
+        }
+    </style>
+</head>
+<body>
+<section class="img-box">
+    <ul>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+    </ul>
+</section>
+</body>
+<script>
+    (function fn() {
+        /*获取变量*/
+        var aLi=document.querySelectorAll(".img-box ul li"),
+            Len=aLi.length;
+        console.log(Len)
+        /*定义图片数组*/
+        var imgArr=["../images/0.png",
+                    "../images/1.png",
+                    "../images/2.png",
+                    "../images/3.png",
+                    "../images/4.png",
+                    "../images/5.png",
+                    "../images/6.png",
+                    "../images/7.png",
+                    "../images/8.png",
+                    "../images/9.png",
+                    "../images/d.png"
+        ];
+        /*定时器*/
+        function timer(){
+            /*获取当前时间*/
+            var nowDate=new Date(),
+                Hours=addZero(nowDate.getHours())+"",
+                Minutes=addZero(nowDate.getMinutes())+"",
+                Seconds=addZero(nowDate.getSeconds())+"";
+            /*给每一个li添加内容*/
+                aLi[2].innerHTML=`<img src=${imgArr[10]} alt="#" class="img-sizeD">`;
+                aLi[5].innerHTML=`<img src=${imgArr[10]} alt="#" class="img-sizeD">`;
+                aLi[0].innerHTML=`<img src=${imgArr[Hours[0]]} alt="#" class="img-sizeNum">`;
+                aLi[1].innerHTML=`<img src=${imgArr[Hours[1]]} alt="#" class="img-sizeNum">`;
+                aLi[3].innerHTML=`<img src=${imgArr[Minutes[0]]} alt="#" class="img-sizeNum">`;
+                aLi[4].innerHTML=`<img src=${imgArr[Minutes[1]]} alt="#" class="img-sizeNum">`;
+                aLi[6].innerHTML=`<img src=${imgArr[Seconds[0]]} alt="#" class="img-sizeNum">`;
+                aLi[7].innerHTML=`<img src=${imgArr[Seconds[1]]} alt="#" class="img-sizeNum">`;
+        }
+        setInterval(timer,1000);
+        timer();//外面先调用一次
+        /*添加0的函数*/
+        function addZero(num) {
+            if(num<9){
+                num="0"+num;
+            };
+            return num;
+        }
+    })();
+</script>
+</html>

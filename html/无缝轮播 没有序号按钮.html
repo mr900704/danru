@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>无缝轮播没有序号按钮</title>
+    <link rel="stylesheet" href="../css/clear%20style.css">
+    <style>
+        section{
+            /*overflow: hidden;*/
+            position: relative;
+            width: 700px;
+            height: 450px;
+            margin: 50px 700px;
+            border: 1px solid pink;
+        }
+        /*图片样式区域*/
+        .img-box{
+            position: relative;
+            left: -700px;
+            top: 0;
+            width: 800%;
+            height: 100%;
+        }
+        .img-box .img-item{
+
+            float: left;
+            /*display: none;*/
+            width: 700px;
+            height: 450px;
+            /*opacity: 0;*/
+        }
+        .img-box .img-item img{
+            width: 100%;
+            height: 100%;
+        }
+        /*按钮样式区域*/
+        .but-box{
+            position: absolute;
+            left: 0;
+            bottom: 5px;
+            width: 100%;
+            height: 30px;
+            background: rgba(0,0,0,.6);
+            line-height: 30px;
+            text-align: center;
+
+            /*pointer-events: none;*/
+
+        }
+        .but-box .but-item{
+
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            margin: 5px ;
+            background: #fff;
+            border-radius: 50%;
+            user-select: none;
+            cursor: pointer;
+        }
+        /*翻页按钮*/
+        .pageBut{
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            width: 22px;
+            height: 32px;
+            margin: auto auto;
+            background: purple;
+            z-index: 10;
+            user-select: none;
+            cursor: pointer;
+        }
+        .prev{
+            left: 10px;
+            background: url("../images/left_arrow.png") 0 0/22px 64px no-repeat;
+        }
+        .next{
+            right: 10px;
+            background: url("../images/right_arrow.png") 0 0/22px 64px no-repeat;
+        }
+        .pageBut:hover{
+            background-position-y: -32px;
+        }
+        /*选中颜色*/
+        .but-box .but-itemActive{
+            background: palevioletred;
+        }
+        .img-box .img-itemActive{
+            /*display: block;*/
+            opacity: 1;
+        }
+    </style>
+</head>
+<body>
+<section>
+    <!--翻页按钮-->
+    <div class="prev pageBut"></div>
+    <div class="next pageBut"></div>
+    <!--图片盒子-->
+    <ul class="img-box">
+        <li class="img-item">
+            <img src="../images/banner06.jpg" alt="3">
+        </li>
+        <li class="img-item img-itemActive">
+            <img src="../images/banner01.jpg" alt="3">
+        </li>
+        <li class="img-item">
+            <img src="../images/banner02.jpg" alt="3">
+        </li>
+        <li class="img-item">
+            <img src="../images/banner03.jpg" alt="3">
+        </li>
+        <li class="img-item">
+            <img src="../images/banner04.jpg" alt="3">
+        </li>
+        <li class="img-item">
+            <img src="../images/banner05.jpg" alt="3">
+        </li>
+        <li class="img-item">
+            <img src="../images/banner06.jpg" alt="3">
+        </li>
+        <li class="img-item img-itemActive">
+            <img src="../images/banner01.jpg" alt="3">
+        </li>
+    </ul>
+    <!--按钮盒子-->
+    <ul class="but-box">
+        <li class="but-item but-itemActive"></li>
+        <li class="but-item"></li>
+        <li class="but-item"></li>
+        <li class="but-item"></li>
+        <li class="but-item"></li>
+        <li class="but-item"></li>
+    </ul>
+</section>
+</body>
+<script>
+    (function fn() {
+        /*获取元素*/
+        var oUl=document.getElementsByClassName("img-box")[0],
+            aPageBut=document.getElementsByClassName("pageBut"),
+            aLiLen=document.getElementsByClassName("img-item").length,
+            oButBox=document.getElementsByClassName("but-box")[0],
+            aButItem=document.getElementsByClassName("but-item"),
+            pageButLen=aPageBut.length,
+            index=0,//下标初始值
+            initIndex=0,//上一个下标初始值
+            oWarpBox=document.getElementsByTagName("section")[0],
+            oWarpBoxWidth=parseFloat(getComputedStyle(oWarpBox)["width"]);//获取最外层盒子的宽度
+
+        //自动播放
+        var timer=setInterval(autoPlay,2000);
+        function autoPlay() {
+            if(index==aLiLen-2){//当到达边界时会出现两次定时器
+                index=0;
+                oUl.style.left=-700+"px";
+            };
+
+            //同步按钮的状态
+            aButItem[initIndex].classList.remove("but-itemActive");
+            index++;
+            console.log(index)
+            var target3=parseFloat(-index*oWarpBoxWidth-oWarpBoxWidth);
+            aButItem[index%aButItem.length].classList.add("but-itemActive");
+            initIndex=index%aButItem.length;
+
+            remove(oUl,"left",target3,10);
+        };
+
+        /*添加上下翻页事件开始 */
+        for(var i=0;i<pageButLen;i++){
+            ;(function (i) {//同步i的值
+                aPageBut[i].onclick=function () {
+                    clearInterval(timer)
+                    if(i==1){
+                        // console.log(index)
+                        if(index == aLiLen-1){//判断边界：当index大于长度-1时，重新为1；
+                            index=1;
+                            oUl.style.left=-index*oWarpBoxWidth+"px";
+                        };
+                        //同步按钮的状态
+                        aButItem[initIndex].classList.remove("but-itemActive");
+                        aButItem[index%aButItem.length].classList.add("but-itemActive");
+                        console.log(initIndex)
+                        console.log(index)
+                        initIndex=index%aButItem.length;
+                        index++;
+                        var target=-index*oWarpBoxWidth;//定义目标值
+                           remove(oUl,"left",target,10);
+                    }else {
+                        if(index==0){//判断边界：当index小于0，重新为长度-1；
+                            index=aLiLen-2;
+                            oUl.style.left=-index*oWarpBoxWidth+"px";
+                        };
+                        //同步按钮的状态(这里没有移除到序号按钮状态***********************************会点击两次才有状态，造成下标和图片序号不匹配）
+                //没有同步好像只是第一轮点击上一页按钮会出现这种清空，点击两次，好像和上面设置了他们的初始值为0和1有关
+                        aButItem[initIndex].classList.remove("but-itemActive");
+                        index--;
+                        aButItem[index%aButItem.length].classList.add("but-itemActive");//好像时给某一个元素移除后又加上了
+                        initIndex=index%aButItem.length;
+
+                        console.log(initIndex)
+                        console.log(index)
+
+                        console.log(index%aButItem.length)
+
+
+                        var target=-index*oWarpBoxWidth;
+                        remove(oUl,"left",target,10);
+                    }
+                };
+
+            })(i);
+        };
+        /*添加上下翻页事件结束 */
+        // 鼠标在oUL移除移入事件时自动播放失效
+        oUl.onmouseenter=function () {
+                    clearInterval(timer)
+         };
+        oUl.onmouseleave=function () {
+            timer=setInterval(autoPlay,2000);
+        };
+        // 鼠标在序号按钮盒子上移除移入事件时自动播放失效
+        oButBox.onmouseenter=function () {
+            clearInterval(timer)
+        };
+        oButBox.onmouseleave=function () {
+            timer=setInterval(autoPlay,2000);
+        };
+        // 鼠标在序号上下翻页盒子上移除移入事件时自动播放失效
+        for(var z=0;z<aPageBut.length;z++){
+            aPageBut[z].onmouseenter=function () {
+                clearInterval(timer)
+            };
+            aPageBut[z].onmouseleave=function () {
+                timer=setInterval(autoPlay,2000);
+            };
+        };
+        //下边序号按钮部分
+        for(var j=0;j<aLiLen-2;j++){
+            /*同步i的参数*/
+            ;(function (j) {
+                aButItem[j].onclick=function () {
+                    this.classList.add("but-itemActive");
+                    //按钮被点击时上一个按钮样式清空
+                    aButItem[initIndex].classList.remove("but-itemActive");
+                    var target2=-(j+1)*oWarpBoxWidth;
+                        initIndex=j;//上一个下标
+                    remove(oUl,"left",target2,10)
+
+                };
+            })(j);
+        }
+
+        //运动框架
+        function remove(obj,attr,target,step) {
+            var init = parseFloat(getComputedStyle(obj)[attr]),
+                step = parseFloat(step),
+                target = parseFloat(target);
+            // console.log(target)
+            //判断初始值和目标值的大小
+            init < target ? step = step : step = -step;//判断起始值和结束值的大小，设置计算为+或者-
+            ;(function move() {
+                var animation = requestAnimationFrame(move);
+                // init=init+step;
+                /*判断传入的参数是否为透明度*/
+                if (attr !== "opacity") {/*传入的参数不为透明度时*/
+                    if (init < target) {//如果初始值小于目标值
+                        init = init + step;
+                        if (init >= target) {//当初始值计算后大于目标值时-重新赋值为目标值-并停止动画
+                            init = target;
+                            cancelAnimationFrame(animation)
+                        }
+                    } else {//当初始值小于目标值时
+                        init = init + step;
+                        if (init <= target) {//当初始值经过计算后小于目标值时-重新赋值为目标值-并停止动画
+                            init = target;
+                            cancelAnimationFrame(animation)
+                        }
+                    }
+                    ;
+                    obj.style[attr] = init + "px";
+                } else {
+                    //当传入的属性时透明度时
+                    if (init < target) {//如果初始值小于目标值
+                        init = init + step;//进行运算
+                        if (init >= target) {//判断当初始值大于等于目标值时-赋值-停止动画
+                            init = target;
+                            cancelAnimationFrame(animation)
+                        }
+                        ;
+                    } else {//如果初始值大于目标值
+                        init = init + step;//进行运算
+                        if (init <= target) {//判断当初始值大于等于目标值时-赋值-停止动画
+                            init = target;
+                            cancelAnimationFrame(animation)
+                        }
+                        ;
+
+                    }
+                    ;
+                    obj.style[attr] = init;
+                }
+            })();
+        }
+/*问题：
+1、点击上一页按钮，序号按钮没有同步显示状态，时点击两次后才出现；
+2、当随意点一个序号按钮后，自动播放中的序号没有同步,自动播放会从自己开始的位置播放；
+*
+* */
+    })();
+</script>
+</html>
